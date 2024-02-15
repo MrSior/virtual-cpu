@@ -1,1 +1,6 @@
 build/
+.clang-format
+.clangd
+mystack/lib/
+mystack/obj/
+tests/bin/
