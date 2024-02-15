@@ -1,9 +1,12 @@
 #ifndef VIRTUALCPU_MYSTACK_H
 #define VIRTUALCPU_MYSTACK_H
 
+#include <cassert>
 #include <concepts>
 #include <cstddef>
+#include <exception>
 #include <iostream>
+#include <stdexcept>
 #include <string>
 #include <type_traits>
 #include <utility>
@@ -71,22 +74,22 @@ template <StackType T> class Stack {
     void push(T &&data) { push(static_cast<const T &>(data)); }
 
     T pop() {
-        if (tail_ != nullptr) {
-            T &&ret_value = std::move(tail_->data);
-
-            // auto ret_value = tail_->data;
-            if (tail_ == head_) {
-                delete tail_;
-                head_ = tail_ = nullptr;
-            } else {
-                auto new_tail = tail_->prev;
-                delete tail_;
-                tail_ = new_tail;
-                tail_->next = nullptr;
-            }
-            return std::move(ret_value);
+        if (empty()) {
+            throw std::runtime_error("can not pop from an empty stack");
+            return 0;
         }
-        return 0;
+        T ret_value(std::move(tail_->data));
+
+        if (tail_ == head_) {
+            delete tail_;
+            head_ = tail_ = nullptr;
+        } else {
+            auto new_tail = tail_->prev;
+            delete tail_;
+            tail_ = new_tail;
+            tail_->next = nullptr;
+        }
+        return std::move(ret_value);
     }
 
     T top() {
@@ -122,10 +125,7 @@ template <StackType T> class Stack {
             this->data = std::move(data);
         }
 
-        ~Node() {
-            std::cout << "in destructor" << data << std::endl;
-            delete next;
-        }
+        ~Node() { delete next; }
     };
     Node *tail_;
     Node *head_;
