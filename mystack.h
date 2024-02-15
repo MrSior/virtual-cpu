@@ -89,7 +89,7 @@ template <StackType T> class Stack {
             tail_ = new_tail;
             tail_->next = nullptr;
         }
-        return std::move(ret_value);
+        return ret_value;
     }
 
     T top() {
