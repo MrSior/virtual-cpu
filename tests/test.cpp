@@ -1,4 +1,6 @@
-#include "../mystack.h"
+#include "../mystack/src/mystack.h"
 #include "criterionlib/include/criterion/criterion.h"
 
-int main() { return 0; }
+Test(misc, failing) { cr_assert(1, "hello world"); }
+
+Test(misc, passing) { cr_assert(1, "hello world"); }

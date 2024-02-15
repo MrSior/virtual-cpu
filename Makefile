@@ -4,32 +4,46 @@ CXXFLAGS=-std=c++20
 BUILD = build
 
 STACKDIR = mystack
-STACKSRCDIR = $(MYSTACKDIR)/src
-STACK = $(MYSTACKDIR)/bin/libStack.a
-STACKSRCS = $(wildcard $(STACKSRCDIR)/*.hpp)
+STACKSRCDIR = $(STACKDIR)/src
+STACKOBJDIR = $(STACKDIR)/obj
+STACKLIBDIR = $(STACKDIR)/lib
+STACK = $(STACKLIBDIR)/libStack.a
+STACKSRCS = $(wildcard $(STACKSRCDIR)/*.cpp)
+STACKOBJS = $(patsubst $(STACKSRCDIR)/%.cpp, $(STACKOBJDIR)/%.o, $(STACKSRCS))
 
 
 TEST=tests
 TESTS=$(wildcard $(TEST)/*.cpp)
 TESTBINS=$(patsubst $(TEST)/%.cpp, $(TEST)/bin/%, $(TESTS))
 
-$(BUILD)/main : main.cpp
-    @mkdir $(BUILD)
-    $(CXX) $(CXXFLAGS) $^ -o $(BUILD)/main -L./$(LIBDIR)/
+all: $(STACK) $(BUILD)/main 
+
+$(BUILD)/main: main.cpp 
+	@mkdir -p $(BUILD)
+	$(CXX) $(CXXFLAGS) $^ -o $(BUILD)/main -L./$(STACKLIBDIR)/ -lStack -I./$(STACKSRCDIR)/
+
+$(STACK): $(STACKOBJS)
+	@mkdir $(STACKLIBDIR)
+	ar cvrs $(STACK) $(STACKOBJS)
+
+$(STACKOBJDIR)/%.o: $(STACKSRCDIR)/%.cpp $(STACKSRCDIR)/%.h
+	@mkdir $(STACKOBJDIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 
+$(TEST)/bin:
+	@mkdir $@
 
-build/mystack: mystack.cpp
-	@mkdir -p build
-	$(CXX) $(CXXFLAGS) $^ -o $@
+$(TEST)/bin/%: $(TEST)/%.cpp
+	$(CXX) $(CXXFLAGS) $< -I./$(STACKSRCDIR)/ -o $@ -L./$(STACKLIBDIR)/ -lStack -I./$(TEST)/criterionlib/include/criterion -L./$(TEST)/criterionlib/lib/ -lcriterion
 
-run: build/mystack
-	@./build/mystack
+test: $(TEST)/bin $(TESTBINS)
+	for test in $(TESTBINS) ; do ./$$test --verbose ; done
 
-test: mystack.h
-
+run: $(BUILD)/main
+	@./$<
 
 clean:
-	@rm -rf build
+	@rm -rf $(BUILD) $(STACKLIBDIR) $(STACKOBJDIR)
 
 .PHONY: run clean
