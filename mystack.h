@@ -76,7 +76,7 @@ template <StackType T> class Stack {
     T pop() {
         if (empty()) {
             throw std::runtime_error("can not pop from an empty stack");
-            return 0;
+            return T();
         }
         T ret_value(std::move(tail_->data));
 
@@ -115,15 +115,9 @@ template <StackType T> class Stack {
             data = T();
         }
 
-        Node(const T &data) {
-            next = prev = nullptr;
-            this->data = data;
-        }
+        Node(const T &data) : data(data) { next = prev = nullptr; }
 
-        Node(T &&data) {
-            next = prev = nullptr;
-            this->data = std::move(data);
-        }
+        Node(T &&data) : data(std::move(data)) { next = prev = nullptr; }
 
         ~Node() { delete next; }
     };

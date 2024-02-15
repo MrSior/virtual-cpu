@@ -21,37 +21,58 @@ class A {
     int a;
     int b;
 
-    A() = default;
+    A() {
+        a = b = 0;
+        std::cout << "LOG: default cstr call" << std::endl;
+    };
 
     A(int a, int b) {
         this->a = a;
         this->b = b;
+        std::cout << "LOG: cstr from data call" << std::endl;
     }
+
+    A(const A &t) {
+        a = t.a;
+        b = t.b;
+        std::cout << "LOG: copy cstr call" << std::endl;
+    }
+
     A(A &&t) {
         a = t.a;
         b = t.b;
+        std::cout << "LOG: move cstr call" << std::endl;
     }
 
     A &operator=(A &&t) {
-        int a = 0;
+        a = t.a;
+        b = t.b;
+        std::cout << "LOG: move assignment operator call" << std::endl;
         return *this;
     }
 
-    ~A() { std::cout << "destuctor call\n"; }
+    A &operator=(const A &t) {
+        a = t.a;
+        b = t.b;
+        std::cout << "LOG: assignment operator call" << std::endl;
+        return *this;
+    }
+
+    ~A() { std::cout << "LOG: destuctor call\n"; }
 };
 
 int main() {
 
-    container::Stack<int> a;
+    container::Stack<A> a;
 
-    for (int i = 0; i < 4; ++i) {
-        a.push(i);
+    for (int i = 0; i < 3; ++i) {
+        a.push({i, i});
     }
 
-    while (!a.empty()) {
-        // std::cout << a.pop() << '\n';
-        std::cout << a.pop() << '\n';
-    }
+    std::cout << "_________pop()_________\n";
+    A elem = a.pop();
+    std::cout << elem.a << " " << elem.b << '\n';
+    std::cout << "_______________________\n";
 
     return 0;
 }
