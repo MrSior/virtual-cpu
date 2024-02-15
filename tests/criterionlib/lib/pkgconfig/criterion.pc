@@ -1,0 +1,12 @@
+prefix=/opt/homebrew/Cellar/criterion/2.4.2
+includedir=${prefix}/include
+libdir=${prefix}/lib
+
+Name: criterion
+Description: A KISS, Cross platform unit testing framework for C and C++
+URL: https://snai.pe/git/criterion
+Version: 2.4.2
+Requires.private: libffi, libgit2, nanomsg
+Libs:  -L${libdir} -lcriterion
+Libs.private: /opt/homebrew/lib/libprotobuf-nanopb.a -lm /opt/homebrew/lib/libprotobuf-nanopb.a
+Cflags: -I${includedir}

@@ -76,7 +76,6 @@ template <StackType T> class Stack {
     T pop() {
         if (empty()) {
             throw std::runtime_error("can not pop from an empty stack");
-            return T();
         }
         T ret_value(std::move(tail_->data));
 
