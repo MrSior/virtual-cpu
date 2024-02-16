@@ -4,3 +4,4 @@ build/
 mystack/lib/
 mystack/obj/
 tests/bin/
+.DS_Store

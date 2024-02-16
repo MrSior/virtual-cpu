@@ -44,6 +44,6 @@ run: $(BUILD)/main
 	@./$<
 
 clean:
-	@rm -rf $(BUILD) $(STACKLIBDIR) $(STACKOBJDIR)
+	@rm -rf $(BUILD) $(STACKLIBDIR) $(STACKOBJDIR) $(TEST)/bin
 
 .PHONY: run clean

@@ -19,21 +19,14 @@ template <typename T>
 concept StackType = (std::default_initializable<T>)&&(
     std::is_move_assignable_v<T>)&&(std::is_move_constructible_v<T>);
 
-template <StackType T> class Stack;
-
-template <StackType T> void swap(Stack<T> &a, Stack<T> &b);
-
 template <StackType T> class Stack {
   public:
-    Stack() {
-        head_ = tail_ = nullptr;
-        size_ = 0;
-    }
+    Stack() = default;
 
-    Stack(Stack<T> &other) : size_(other.size_) {
+    Stack(const Stack<T> &other) : size_(other.size_) {
         auto other_iter = other.head_;
         while (other_iter != nullptr) {
-            Push(other_iter->data);
+            push(other_iter->data);
             other_iter = other_iter->next;
         }
     }
@@ -41,7 +34,7 @@ template <StackType T> class Stack {
     Stack(Stack<T> &&other) noexcept
         : head_(std::exchange(other.head_, nullptr)),
           tail_(std::exchange(other.tail_, nullptr)),
-          size_(std::exchange(other.size__, 0)) {}
+          size_(std::exchange(other.size_, 0)) {}
 
     Stack &operator=(Stack<T> other) {
         swap(*this, other);
@@ -50,11 +43,8 @@ template <StackType T> class Stack {
 
     Stack &operator=(Stack<T> &&other) noexcept {
         if (this != &other) {
-            delete head_;
-
-            head_ = std::exchange(other.head_, nullptr);
-            tail_ = std::exchange(other.tail_, nullptr);
-            size_ = std::exchange(other.size_, nullptr);
+            Stack<T> tmp(std::move(other));
+            swap(tmp, *this);
         }
 
         return *this;
@@ -92,10 +82,11 @@ template <StackType T> class Stack {
     }
 
     T top() {
-        if (tail_ != nullptr) {
-            return tail_->data;
+        if (tail_ == nullptr) {
+            throw std::runtime_error(
+                "can not get top element from an empty stack");
         }
-        return T();
+        return tail_->data;
     }
 
     bool empty() { return head_ == nullptr; }
@@ -105,25 +96,24 @@ template <StackType T> class Stack {
   private:
     class Node {
       public:
-        Node *next;
-        Node *prev;
-        T data;
+        Node *next = nullptr;
+        Node *prev = nullptr;
+        T data = T();
 
-        Node() {
-            next = prev = nullptr;
-            data = T();
-        }
+        Node() = default;
 
-        Node(const T &data) : data(data) { next = prev = nullptr; }
+        Node(const T &data) : data(data) {}
 
-        Node(T &&data) : data(std::move(data)) { next = prev = nullptr; }
+        Node(T &&data) : data(std::move(data)) {}
 
         ~Node() { delete next; }
     };
-    Node *tail_;
-    Node *head_;
 
-    size_t size_;
+    Node *tail_ = nullptr;
+    Node *head_ = nullptr;
+
+    size_t size_ = 0;
+    ;
 };
 
 template <StackType T> void swap(Stack<T> &a, Stack<T> &b) {
