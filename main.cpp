@@ -1,4 +1,4 @@
-#include "mystack.h"
+#include "mystack/src/mystack.h"
 #include <cstddef>
 #include <initializer_list>
 #include <iostream>
@@ -63,16 +63,16 @@ class A {
 
 int main() {
 
-    container::Stack<A> a;
+    // container::Stack<A> a;
 
-    for (int i = 0; i < 3; ++i) {
-        a.push({i, i});
-    }
+    // for (int i = 0; i < 3; ++i) {
+    //     a.push(A({i, i}));
+    // }
 
-    std::cout << "_________pop()_________\n";
-    A elem = a.pop();
-    std::cout << elem.a << " " << elem.b << '\n';
-    std::cout << "_______________________\n";
+    // std::cout << "_________pop()_________\n";
+    // A elem = a.pop();
+    // std::cout << elem.a << " " << elem.b << '\n';
+    // std::cout << "_______________________\n";
 
     return 0;
 }

@@ -11,9 +11,6 @@
 #include <type_traits>
 #include <utility>
 
-// template <typename T>
-// concept Number = std::integral<T> || std::floating_point<T>;
-
 namespace container {
 template <typename T>
 concept StackType = (std::default_initializable<T>)&&(
@@ -33,7 +30,6 @@ template <StackType T> class Stack {
 
     Stack(Stack<T> &&other) noexcept
         : head_(std::exchange(other.head_, nullptr)),
-          tail_(std::exchange(other.tail_, nullptr)),
           size_(std::exchange(other.size_, 0)) {}
 
     Stack &operator=(Stack<T> other) {
@@ -50,43 +46,33 @@ template <StackType T> class Stack {
         return *this;
     }
 
-    void push(const T &data) {
-        if (tail_ == nullptr) {
-            head_ = tail_ = new Node(data);
-        } else {
-            tail_->next = new Node(data);
-
-            tail_->next->prev = tail_;
-            tail_ = tail_->next;
-        }
+    template <typename U>
+    void push(U &&data)
+        requires std::same_as<T, std::remove_reference_t<U>>
+    {
+        Node *new_node = new Node(std::forward<U>(data));
+        new_node->next = head_;
+        head_ = new_node;
     }
-
-    void push(T &&data) { push(static_cast<const T &>(data)); }
 
     T pop() {
         if (empty()) {
             throw std::runtime_error("can not pop from an empty stack");
         }
-        T ret_value(std::move(tail_->data));
+        T ret_value(std::move(head_->data));
+        Node *new_head = head_->next;
+        delete head_;
+        head_ = new_head;
 
-        if (tail_ == head_) {
-            delete tail_;
-            head_ = tail_ = nullptr;
-        } else {
-            auto new_tail = tail_->prev;
-            delete tail_;
-            tail_ = new_tail;
-            tail_->next = nullptr;
-        }
         return ret_value;
     }
 
     T top() {
-        if (tail_ == nullptr) {
+        if (head_ == nullptr) {
             throw std::runtime_error(
                 "can not get top element from an empty stack");
         }
-        return tail_->data;
+        return head_->data;
     }
 
     bool empty() { return head_ == nullptr; }
@@ -97,7 +83,6 @@ template <StackType T> class Stack {
     class Node {
       public:
         Node *next = nullptr;
-        Node *prev = nullptr;
         T data = T();
 
         Node() = default;
@@ -108,12 +93,9 @@ template <StackType T> class Stack {
 
         ~Node() { delete next; }
     };
-
-    Node *tail_ = nullptr;
     Node *head_ = nullptr;
 
     size_t size_ = 0;
-    ;
 };
 
 template <StackType T> void swap(Stack<T> &a, Stack<T> &b) {
