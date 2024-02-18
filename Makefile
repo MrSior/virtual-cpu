@@ -1,5 +1,6 @@
-CXX=g++
-CXXFLAGS=-std=c++20
+CXX=clang++
+# CXX=/opt/homebrew/opt/gcc/bin/g++-13
+CXXFLAGS=-std=c++20 -Wno-error=deprecated-declarations
 
 BUILD = build
 

@@ -2,6 +2,7 @@
 #include <cstddef>
 #include <initializer_list>
 #include <iostream>
+#include <memory>
 #include <stack>
 #include <type_traits>
 
@@ -73,6 +74,10 @@ int main() {
     // A elem = a.pop();
     // std::cout << elem.a << " " << elem.b << '\n';
     // std::cout << "_______________________\n";
+
+    container::Stack<int> a;
+
+    // std::allocator<int> b;
 
     return 0;
 }
