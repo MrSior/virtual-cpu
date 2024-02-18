@@ -5,6 +5,7 @@
 #include <memory>
 #include <stack>
 #include <type_traits>
+#include <vector>
 
 class C {
     int cl;
@@ -63,6 +64,8 @@ class A {
 };
 
 int main() {
+
+    std::vector<int> v;
 
     // container::Stack<A> a;
 
