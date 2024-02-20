@@ -39,7 +39,9 @@ $(TEST)/bin/%: $(TEST)/%.cpp
 	$(CXX) $(CXXFLAGS) $< -I./$(STACKSRCDIR)/ -o $@ -L./$(STACKLIBDIR)/ -lStack -I./$(TEST)/criterionlib/include/criterion -L./$(TEST)/criterionlib/lib/ -lcriterion
 
 test: $(TEST)/bin $(TESTBINS)
-# 	for test in $(TESTBINS) ; do ./$$test ; done 
+	for test in $(TESTBINS) ; do ./$$test ; done
+
+testinfo: $(TEST)/bin $(TESTBINS)
 	for test in $(TESTBINS) ; do ./$$test --verbose ; done 
 
 run: $(BUILD)/main

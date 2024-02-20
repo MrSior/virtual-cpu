@@ -2,7 +2,6 @@
 #include "criterionlib/include/criterion/assert.h"
 #include "criterionlib/include/criterion/criterion.h"
 #include <cstddef>
-#include <stack>
 
 Test(stack_methods, empty_pop) {
     container::Stack<int> a;
@@ -14,7 +13,7 @@ Test(stack_methods, push) {
     for (int ind = 0; ind < 5; ++ind) {
         stack.push(ind);
     }
-    cr_expect(stack.top() == 4, "hello world");
+    cr_expect(stack.top() == 4, "not correct push");
 }
 
 Test(stack_methods, pop) {
@@ -24,7 +23,7 @@ Test(stack_methods, pop) {
     }
 
     for (int ind = 4; ind >= 0; --ind) {
-        cr_expect(stack.pop() == ind, "pushed not correct value");
+        cr_assert(stack.pop() == ind, "pushed not correct value");
     }
     cr_expect(stack.empty(), "pop does not delete all data");
 }
@@ -38,7 +37,7 @@ Test(stack_methods, copy_assignment) {
 
     container::Stack<int> second_stack = first_stack;
     while (!first_stack.empty()) {
-        cr_expect(first_stack.pop() == second_stack.pop(),
+        cr_assert(first_stack.pop() == second_stack.pop(),
                   "elements do not match");
     }
     cr_expect(second_stack.empty(), "appear extra elements");
@@ -53,7 +52,7 @@ Test(stack_methods, copy_constructor) {
 
     container::Stack<int> second_stack(first_stack);
     while (!first_stack.empty()) {
-        cr_expect(first_stack.pop() == second_stack.pop(),
+        cr_assert(first_stack.pop() == second_stack.pop(),
                   "elements do not match");
     }
     cr_expect(second_stack.empty(), "appear extra elements");
@@ -68,7 +67,7 @@ Test(stack_methods, move_constructor) {
 
     container::Stack<int> second_stack(std::move(first_stack));
     for (int ind = 4; ind >= 0; --ind) {
-        cr_expect(second_stack.pop() == ind, "elements do not match");
+        cr_assert(second_stack.pop() == ind, "elements do not match");
     }
     cr_expect(second_stack.empty(), "appear extra elements");
 }

@@ -49,9 +49,9 @@ template <StackType T, typename Alloc = std::allocator<T>> class Stack {
           size_(std::exchange(other.size_, 0)) {
         if (node_alloc_traits_::propagate_on_container_move_assignment::value ==
             true) {
-            alloc_ = std::move(other.alloc_);
+            alloc_ = other.alloc_;
         } else {
-            alloc_ = Alloc();
+            alloc_ = std::move(other.alloc_);
         }
     }
 
@@ -91,6 +91,7 @@ template <StackType T, typename Alloc = std::allocator<T>> class Stack {
         node_alloc_traits_::deallocate(node_alloc_, head_, 1);
         head_ = new_head;
 
+        --size_;
         return ret_value;
     }
 
