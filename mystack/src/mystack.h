@@ -17,14 +17,13 @@ template <typename T>
 concept StackType = (std::default_initializable<T>)&&(
     std::is_move_assignable_v<T>)&&(std::is_move_constructible_v<T>);
 
-template <StackType T, typename Alloc = std::allocator<T>> class Stack {
+template <StackType T, typename Alloc = std::allocator<T>> class Stack : private Alloc {
   public:
     Stack(const Alloc &alloc = Alloc()) {}
 
     Stack(const Stack<T> &other)
-        : size_(other.size_),
-          alloc_(alloc_traits_::select_on_container_copy_construction(
-              other.alloc_)),
+        : Alloc(), 
+          size_(other.size_),
           node_alloc_(node_alloc_traits_::select_on_container_copy_construction(
               other.node_alloc_)) {
         Node *other_iter = other.head_;
@@ -49,9 +48,9 @@ template <StackType T, typename Alloc = std::allocator<T>> class Stack {
           size_(std::exchange(other.size_, 0)) {
         if (node_alloc_traits_::propagate_on_container_move_assignment::value ==
             true) {
-            alloc_ = other.alloc_;
+            node_alloc_ = other.node_alloc_;
         } else {
-            alloc_ = std::move(other.alloc_);
+            node_alloc_ = std::move(other.node_alloc_);
         }
     }
 
@@ -125,7 +124,6 @@ template <StackType T, typename Alloc = std::allocator<T>> class Stack {
     Node *head_ = nullptr;
     size_t size_ = 0;
 
-    Alloc alloc_;
     using alloc_traits_ = std::allocator_traits<Alloc>;
 
     using node_alloc_t_ = typename alloc_traits_::template rebind_alloc<Node>;

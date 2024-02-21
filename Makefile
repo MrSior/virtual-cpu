@@ -1,6 +1,6 @@
 CXX=clang++
 # CXX=/opt/homebrew/opt/gcc/bin/g++-13
-CXXFLAGS=-std=c++20 -Wno-error=deprecated-declarations
+CXXFLAGS=-std=c++20
 
 BUILD = build
 
@@ -21,28 +21,28 @@ all: $(STACK) $(BUILD)/main
 
 $(BUILD)/main: main.cpp 
 	@mkdir -p $(BUILD)
-	$(CXX) $(CXXFLAGS) $^ -o $(BUILD)/main -L./$(STACKLIBDIR)/ -lStack -I./$(STACKSRCDIR)/
+	@$(CXX) $(CXXFLAGS) $^ -o $(BUILD)/main -L./$(STACKLIBDIR)/ -lStack -I./$(STACKSRCDIR)/
 
 $(STACK): $(STACKOBJS)
 	@mkdir $(STACKLIBDIR)
-	ar cvrs $(STACK) $(STACKOBJS)
+	@ar cvrs $(STACK) $(STACKOBJS)
 
 $(STACKOBJDIR)/%.o: $(STACKSRCDIR)/%.cpp $(STACKSRCDIR)/%.h
 	@mkdir $(STACKOBJDIR)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	@$(CXX) $(CXXFLAGS) -c $< -o $@
 
 
 $(TEST)/bin:
 	@mkdir $@
 
 $(TEST)/bin/%: $(TEST)/%.cpp
-	$(CXX) $(CXXFLAGS) $< -I./$(STACKSRCDIR)/ -o $@ -L./$(STACKLIBDIR)/ -lStack -I./$(TEST)/criterionlib/include/criterion -L./$(TEST)/criterionlib/lib/ -lcriterion
+	@$(CXX) $(CXXFLAGS) $< -I./$(STACKSRCDIR)/ -o $@ -L./$(STACKLIBDIR)/ -lStack -I./$(TEST)/criterionlib/include/criterion -L./$(TEST)/criterionlib/lib/ -lcriterion
 
 test: $(TEST)/bin $(TESTBINS)
-	for test in $(TESTBINS) ; do ./$$test ; done
+	@for test in $(TESTBINS) ; do ./$$test ; done
 
 testinfo: $(TEST)/bin $(TESTBINS)
-	for test in $(TESTBINS) ; do ./$$test --verbose ; done 
+	@for test in $(TESTBINS) ; do ./$$test --verbose ; done 
 
 run: $(BUILD)/main
 	@./$<
