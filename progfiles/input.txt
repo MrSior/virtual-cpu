@@ -1,0 +1,20 @@
+begin
+push 0
+popr CX
+
+cycle_for:
+
+pushr CX
+call FIBONACCI
+pop
+
+pushr CX
+push 1
+add
+popr CX
+
+pushr cx
+push 20
+jbe cycle_for
+
+end

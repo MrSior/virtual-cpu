@@ -1,0 +1,25 @@
+<program> ::= "begin\n" <expressions> "end"
+<expressions> ::= <expression> "\n" | <expression> "\n" <expressions>
+
+<expression> ::=  <label> | <instruction> | <instruction_arg>
+
+<label> ::= <name> <op_colon>
+<op_colon> ::= ":"
+<instruction> ::= "pop" | "add" | "sub" | "mul" | "div" | "out" | "in" | "ret"
+<instruction_arg> ::= "push" <val> | "pushr" <reg> | "popr" <reg> | "jmp" <arg> | "jeq" <arg> | "jne" <arg> | "ja" <arg> | "jae" <arg> | "jb" <arg> | "jbe" <arg> | "call" <arg>
+<val> ::= <number> | <number> <val>
+<arg> ::= <name>
+<reg> ::= "AX" | "BX" | "CX" | "DX"
+
+<name> ::= <letter> | <letter> <str>
+<letter> ::= "a...z" | "A...Z"
+<num> ::= "0...9"
+<str> ::= <letter> <str> | <num> <str> | <str> | <num>
+
+
+Lexeme types:
+1) reserved keyword
+2) identifier
+3) literal
+4) punctuation
+5) newline

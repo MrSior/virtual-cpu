@@ -1,3 +1,5 @@
+#include "lexemeparser/Lexeme.h"
+#include "lexemeparser/Parser.h"
 #include "mystack/src/mystack.h"
 #include <cstddef>
 #include <initializer_list>
@@ -65,8 +67,6 @@ class A {
 
 int main() {
 
-    std::vector<int> v;
-
     // container::Stack<A> a;
 
     // for (int i = 0; i < 3; ++i) {
@@ -78,9 +78,16 @@ int main() {
     // std::cout << elem.a << " " << elem.b << '\n';
     // std::cout << "_______________________\n";
 
-    container::Stack<int> a;
+    // container::Stack<int> a;
 
-    // std::allocator<int> b;
+    LexemeParser parser;
+
+    auto res = parser.GetLexemes("./progfiles/input.txt");
+
+    for (auto &elem : res) {
+        std::cout << g_LexemeTypeToStr[elem.type] << " "
+                  << LexemeDataToStr(elem) << std::endl;
+    }
 
     return 0;
 }
