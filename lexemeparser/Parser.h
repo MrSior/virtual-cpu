@@ -8,7 +8,7 @@
 class LexemeParser {
   public:
     LexemeParser() = default;
-    std::vector<Lexeme> GetLexemes(std::string input_file);
+    std::vector<Lexeme> GetLexemes(const std::string &input_file);
 };
 
 #endif

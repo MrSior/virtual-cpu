@@ -6,3 +6,4 @@ mystack/obj/
 tests/bin/
 .DS_Store
 lexemeparser/obj/
+.idea/

@@ -1,11 +1,15 @@
+#include "compile/Compiler.h"
 #include "lexemeparser/Lexeme.h"
 #include "lexemeparser/Parser.h"
 #include "mystack/src/mystack.h"
 #include <cstddef>
+#include <filesystem>
 #include <initializer_list>
 #include <iostream>
 #include <memory>
+#include <sstream>
 #include <stack>
+#include <stdexcept>
 #include <type_traits>
 #include <vector>
 
@@ -65,7 +69,7 @@ class A {
     ~A() { std::cout << "LOG: destuctor call\n"; }
 };
 
-int main() {
+int main(int argc, char *argv[]) {
 
     // container::Stack<A> a;
 
@@ -80,14 +84,47 @@ int main() {
 
     // container::Stack<int> a;
 
+    if (argc < 2) {
+        throw std::runtime_error("no file was passed in arguments");
+    }
+    std::string input_file = argv[argc - 1];
+
     LexemeParser parser;
 
-    auto res = parser.GetLexemes("./progfiles/input.txt");
+    auto res = parser.GetLexemes(input_file);
 
     for (auto &elem : res) {
-        std::cout << g_LexemeTypeToStr[elem.type] << " "
+        std::cout << "Line: " << elem.line << " pos: " << elem.pos << " "
+                  << g_LexemeTypeToStr[elem.type] << " "
                   << LexemeDataToStr(elem) << std::endl;
     }
+
+    for (auto it = res.begin(); it < res.end();) {
+        if (it->type == ELexemeType::Null) {
+            it = res.erase(it);
+        } else if (it->type == ELexemeType::Invalid) {
+            std::stringstream error;
+            error << "[ERROR] Invalid symbol at line " << it->line << " pos "
+                  << it->pos << std::endl;
+            throw std::runtime_error(error.str());
+        } else {
+            ++it;
+        }
+    }
+
+    for (auto it = res.begin() + 1; it < res.end();) {
+        if (it->type == ELexemeType::Newline &&
+            (it - 1)->type == ELexemeType::Newline) {
+            it = res.erase(it);
+        } else {
+            ++it;
+        }
+    }
+
+    Compiler compiler(res);
+
+    compiler.compile();
+    auto poliz = compiler.getPoliz();
 
     return 0;
 }

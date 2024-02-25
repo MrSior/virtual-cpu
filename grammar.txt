@@ -1,5 +1,5 @@
-<program> ::= "begin\n" <expressions> "end"
-<expressions> ::= <expression> "\n" | <expression> "\n" <expressions>
+<program> ::= "begin\n" <expressions>
+<expressions> ::= <expression> "\n" "end" | <expression> "\n" <expressions>
 
 <expression> ::=  <label> | <instruction> | <instruction_arg>
 
@@ -9,7 +9,7 @@
 <instruction_arg> ::= "push" <val> | "pushr" <reg> | "popr" <reg> | "jmp" <arg> | "jeq" <arg> | "jne" <arg> | "ja" <arg> | "jae" <arg> | "jb" <arg> | "jbe" <arg> | "call" <arg>
 <val> ::= <number> | <number> <val>
 <arg> ::= <name>
-<reg> ::= "AX" | "BX" | "CX" | "DX"
+<reg> ::= "AX" | "BX" | "CX" | "DX" | "PC"
 
 <name> ::= <letter> | <letter> <str>
 <letter> ::= "a...z" | "A...Z"

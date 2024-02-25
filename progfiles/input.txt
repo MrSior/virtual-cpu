@@ -2,6 +2,8 @@ begin
 push 0
 popr CX
 
+FIBONACCI:
+
 cycle_for:
 
 pushr CX

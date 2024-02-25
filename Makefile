@@ -22,12 +22,17 @@ LEXEME_P_OBJ_DIR = $(LEXEME_P_DIR)/obj
 LEXEME_P_SRCS = $(wildcard $(LEXEME_P_DIR)/*.cpp)
 LEXEME_P_OBJS = $(patsubst $(LEXEME_P_DIR)/%.cpp, $(LEXEME_P_OBJ_DIR)/%.o, $(LEXEME_P_SRCS))
 
+COMPILE_DIR = compile
+COMPILE_OBJ_DIR = $(COMPILE_DIR)/obj
+COMPILE_SRCS = $(wildcard $(COMPILE_DIR)/*.cpp)
+COMPILE_OBJS = $(patsubst $(COMPILE_DIR)/%.cpp, $(COMPILE_OBJ_DIR)/%.o, $(COMPILE_SRCS))
+
 
 all: $(STACK) $(BUILD)/main 
 
-$(BUILD)/main: main.cpp $(LEXEME_P_OBJS)
+$(BUILD)/main: main.cpp $(LEXEME_P_OBJS) $(COMPILE_OBJS)
 	@mkdir -p $(BUILD)
-	$(CXX) $(CXXFLAGS) $^ -o $(BUILD)/main -L./$(STACKLIBDIR)/ -lStack -I./$(STACKSRCDIR)/ -I./$(LEXEME_P_DIR)
+	$(CXX) $(CXXFLAGS) $^ -o $(BUILD)/main -L./$(STACKLIBDIR)/ -lStack -I./$(STACKSRCDIR)/ -I./$(LEXEME_P_DIR) -I./$(COMPILE_DIR)
 
 $(STACK): $(STACKOBJS)
 	@mkdir $(STACKLIBDIR)
@@ -39,6 +44,10 @@ $(STACKOBJDIR)/%.o: $(STACKSRCDIR)/%.cpp $(STACKSRCDIR)/%.h
 
 $(LEXEME_P_OBJ_DIR)/%.o: $(LEXEME_P_DIR)/%.cpp $(LEXEME_P_DIR)/%.h
 	@mkdir -p $(LEXEME_P_OBJ_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(COMPILE_OBJ_DIR)/%.o: $(COMPILE_DIR)/%.cpp $(COMPILE_DIR)/%.h
+	@mkdir -p $(COMPILE_OBJ_DIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 
@@ -54,10 +63,13 @@ test: $(TEST)/bin $(TESTBINS)
 testinfo: $(TEST)/bin $(TESTBINS)
 	@for test in $(TESTBINS) ; do ./$$test --verbose ; done 
 
+.PHONY: run clean test testinfo
+
 run: $(BUILD)/main
-	@./$<
+	@./$< $(filter-out $@,$(MAKECMDGOALS))
 
 clean:
-	@rm -rf $(BUILD) $(STACKLIBDIR) $(STACKOBJDIR) $(TEST)/bin $(LEXEME_P_OBJ_DIR)
+	@rm -rf $(BUILD) $(STACKLIBDIR) $(STACKOBJDIR) $(TEST)/bin $(LEXEME_P_OBJ_DIR) $(COMPILE_OBJ_DIR)
 
-.PHONY: run clean
+%:
+	@:
