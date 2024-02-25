@@ -40,12 +40,14 @@ class Compiler {
     Poliz poliz_;
     int cur_lexeme_idx_ = -1;
 
+    enum class EArgType { Reg, Label, Num };
+
     void movePtr(int idx);
 
     void Program();
     void Expressions();
     void Expression();
-    void Arg();
+    void Arg(EArgType expect_arg);
 
   public:
     Compiler(std::vector<Lexeme> input)

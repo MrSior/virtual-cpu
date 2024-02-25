@@ -76,6 +76,7 @@ void Compiler::Expression() {
         if (std::find(inst.begin(), inst.end(), cur_lexeme_.str) !=
             inst.end()) {
             poliz_.addEntry(PolizEntry(StrToPEntryType(cur_lexeme_.str)));
+            movePtr(1);
         } else if (std::find(inst_with_arg.begin(), inst_with_arg.end(),
                              cur_lexeme_.str) != inst_with_arg.end()) {
             if (cur_lexeme_.str == "call") {
@@ -85,8 +86,16 @@ void Compiler::Expression() {
             } else {
                 poliz_.addEntry(PolizEntry(StrToPEntryType(cur_lexeme_.str)));
             }
+
+            EArgType arg_type = EArgType::Label;
+            if (cur_lexeme_.str == "push") {
+                arg_type = EArgType::Num;
+            } else if (cur_lexeme_.str == "pushr" ||
+                       cur_lexeme_.str == "popr") {
+                arg_type = EArgType::Reg;
+            }
             movePtr(1);
-            Arg();
+            Arg(arg_type);
         } else {
             throw CompileError("Invalid instruction", cur_lexeme_.line,
                                cur_lexeme_.pos);
@@ -101,26 +110,33 @@ void Compiler::Expression() {
     }
 }
 
-void Compiler::Arg() {
-    switch (cur_lexeme_.type) {
-    case ELexemeType::LiteralNum64:
+void Compiler::Arg(EArgType expect_arg) {
+    if (expect_arg == EArgType::Num) {
+        if (cur_lexeme_.type != ELexemeType::LiteralNum64) {
+            throw CompileError("Expected number as an argument",
+                               cur_lexeme_.line, cur_lexeme_.pos);
+        }
         poliz_.setEntryOp(poliz_.getSize() - 1, cur_lexeme_.i64);
-        break;
-    case ELexemeType::Keyword:
+    } else if (expect_arg == EArgType::Reg) {
+        if (cur_lexeme_.type != ELexemeType::Keyword) {
+            throw CompileError("Expected register as an argument",
+                               cur_lexeme_.line, cur_lexeme_.pos);
+        }
         poliz_.setEntryOp(poliz_.getSize() - 1, StrToRegType(cur_lexeme_.str));
-        break;
-    case ELexemeType::Identifier:
+    } else if (expect_arg == EArgType::Label) {
+        if (cur_lexeme_.type != ELexemeType::Identifier) {
+            throw CompileError("Expected label as an argument",
+                               cur_lexeme_.line, cur_lexeme_.pos);
+        }
         if (!poliz_.checkIfLabelInRegist(cur_lexeme_.str)) {
             throw CompileError("Transition to undefined label",
                                cur_lexeme_.line, cur_lexeme_.pos);
         }
         poliz_.setEntryOp(poliz_.getSize() - 1,
                           poliz_.getLabelAddress(cur_lexeme_.str));
-        break;
-    default:
-        throw CompileError("Invalid instruction argument", cur_lexeme_.line,
-                           cur_lexeme_.pos);
     }
+
     movePtr(1);
 }
+
 Poliz Compiler::getPoliz() { return poliz_; }

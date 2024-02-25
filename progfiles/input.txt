@@ -15,7 +15,7 @@ push 1
 add
 popr CX
 
-pushr cx
+pushr CX
 push 20
 jbe cycle_for
 
