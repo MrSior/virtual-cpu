@@ -1,22 +1,12 @@
 begin
-push 0
-popr CX
 
-FIBONACCI:
+start:
 
-cycle_for:
-
-pushr CX
-call FIBONACCI
-pop
-
-pushr CX
 push 1
-add
-popr CX
-
-pushr CX
-push 20
-jbe cycle_for
+push 2
+push 3
+out
+out
+out
 
 end

@@ -1,4 +1,6 @@
 #include "Runtime.h"
+#include <cstdint>
+#include <ostream>
 
 Runtime::Runtime(std::string bin_path) {
     bin_path_ = std::move(bin_path);
@@ -24,4 +26,108 @@ Runtime::Runtime(std::string bin_path) {
     in.close();
 }
 
-void Runtime::run() { container::Stack<int64_t> stack; }
+void Runtime::run() {
+    container::Stack<int64_t> stack;
+
+    int64_t reg_AX, reg_BX, reg_CX, reg_DX, reg_PC;
+    reg_AX = reg_BX = reg_CX = reg_DX = reg_PC = 0;
+
+    std::map<ERegister, int64_t> regs = {{ERegister::AX, 0},
+                                         {ERegister::BX, 0},
+                                         {ERegister::CX, 0},
+                                         {ERegister::DX, 0},
+                                         {ERegister::PC, 0}};
+
+    for (int ind = 0; ind < program_.size();) {
+        bool isMove = true;
+
+        auto elem = program_[ind];
+        if (elem.cmd == EPolizCmd::Push) {
+            stack.push(elem.operand);
+        } else if (elem.cmd == EPolizCmd::Pop) {
+            stack.pop();
+        } else if (elem.cmd == EPolizCmd::Pushr) {
+            stack.push(regs[elem.reg]);
+        } else if (elem.cmd == EPolizCmd::Popr) {
+            regs[elem.reg] = stack.pop();
+        } else if (elem.cmd == EPolizCmd::Add) {
+            stack.push(stack.pop() + stack.pop());
+        } else if (elem.cmd == EPolizCmd::Sub) {
+            stack.push(stack.pop() - stack.pop());
+        } else if (elem.cmd == EPolizCmd::Mul) {
+            stack.push(stack.pop() * stack.pop());
+        } else if (elem.cmd == EPolizCmd::Div) {
+            stack.push(stack.pop() / stack.pop());
+        } else if (elem.cmd == EPolizCmd::Out) {
+            std::cout << stack.pop() << std::endl;
+        } else if (elem.cmd == EPolizCmd::In) {
+            int64_t val;
+            std::cin >> val;
+            stack.push(val);
+        } else if (elem.cmd == EPolizCmd::Jmp) {
+            ind = elem.operand;
+            isMove = false;
+        } else if (elem.cmd == EPolizCmd::Jeq) {
+            auto val1 = stack.pop();
+            auto val2 = stack.pop();
+            // std::cout << val1 << " " << val2 << std::endl;
+            if (val1 == val2) {
+                ind = elem.operand;
+                isMove = false;
+            }
+            stack.push(val2);
+            stack.push(val1);
+        } else if (elem.cmd == EPolizCmd::Jne) {
+            auto val1 = stack.pop();
+            auto val2 = stack.pop();
+            if (val1 != val2) {
+                ind = elem.operand;
+                isMove = false;
+            }
+            stack.push(val2);
+            stack.push(val1);
+        } else if (elem.cmd == EPolizCmd::Ja) {
+            auto val1 = stack.pop();
+            auto val2 = stack.pop();
+            if (val1 > val2) {
+                ind = elem.operand;
+                isMove = false;
+            }
+            stack.push(val2);
+            stack.push(val1);
+        } else if (elem.cmd == EPolizCmd::Jae) {
+            auto val1 = stack.pop();
+            auto val2 = stack.pop();
+            if (val1 >= val2) {
+                ind = elem.operand;
+                isMove = false;
+            }
+            stack.push(val2);
+            stack.push(val1);
+        } else if (elem.cmd == EPolizCmd::Jb) {
+            auto val1 = stack.pop();
+            auto val2 = stack.pop();
+            if (val1 < val2) {
+                ind = elem.operand;
+                isMove = false;
+            }
+            stack.push(val2);
+            stack.push(val1);
+        } else if (elem.cmd == EPolizCmd::Jbe) {
+            auto val1 = stack.pop();
+            auto val2 = stack.pop();
+            if (val1 <= val2) {
+                ind = elem.operand;
+                isMove = false;
+            }
+            stack.push(val2);
+            stack.push(val1);
+        } else if (elem.cmd == EPolizCmd::Ret) {
+            ind = stack.pop();
+        }
+
+        if (isMove) {
+            ++ind;
+        }
+    }
+}
