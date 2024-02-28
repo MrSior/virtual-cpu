@@ -7,3 +7,5 @@ tests/bin/
 .DS_Store
 lexemeparser/obj/
 .idea/
+compile/obj/
+runtime/obj/

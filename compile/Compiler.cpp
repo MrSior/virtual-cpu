@@ -133,7 +133,7 @@ void Compiler::Arg(EArgType expect_arg) {
                                cur_lexeme_.line, cur_lexeme_.pos);
         }
         poliz_.setEntryOp(poliz_.getSize() - 1,
-                          poliz_.getLabelAddress(cur_lexeme_.str));
+                          (int64_t)poliz_.getLabelAddress(cur_lexeme_.str));
     }
 
     movePtr(1);

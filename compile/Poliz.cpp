@@ -19,6 +19,7 @@ bool Poliz::checkIfLabelInRegist(const std::string &label) {
 int Poliz::getLabelAddress(const std::string &label) {
     return labelsRegistry_[label];
 }
+std::vector<PolizEntry> Poliz::getEntries() const { return poliz_; }
 
 EPolizCmd StrToPEntryType(const std::string &str) {
     if (str == "pop")
@@ -78,3 +79,19 @@ ERegister StrToRegType(const std::string &str) {
     }
     return ERegister::Invalid;
 }
+PolizEntry::PolizStruct PolizEntry::toStruct() {
+    return {(int32_t)cmd, (int32_t)reg, operand};
+}
+
+std::map<EPolizCmd, std::string> g_PolizCmdToStr = {
+    {EPolizCmd::Invalid, "Invalid"}, {EPolizCmd::Push, "push"},
+    {EPolizCmd::Pop, "pop"},         {EPolizCmd::Pushr, "pushr"},
+    {EPolizCmd::Popr, "popr"},       {EPolizCmd::Add, "add"},
+    {EPolizCmd::Sub, "sub"},         {EPolizCmd::Mul, "mul"},
+    {EPolizCmd::Div, "div"},         {EPolizCmd::Out, "out"},
+    {EPolizCmd::In, "in"},           {EPolizCmd::Jmp, "jmp"},
+    {EPolizCmd::Jeq, "jeq"},         {EPolizCmd::Jne, "jne"},
+    {EPolizCmd::Ja, "ja"},           {EPolizCmd::Jae, "jae"},
+    {EPolizCmd::Jb, "Jb"},           {EPolizCmd::Jbe, "Jbe"},
+    {EPolizCmd::Ret, "Ret"},
+};

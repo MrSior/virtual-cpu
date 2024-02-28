@@ -43,6 +43,14 @@ class PolizEntry {
     EPolizCmd cmd = EPolizCmd::Invalid;
     ERegister reg = ERegister::None;
     int64_t operand = 0;
+
+    struct PolizStruct {
+        int32_t cmd;
+        int32_t reg;
+        int64_t operand;
+    };
+
+    PolizStruct toStruct();
 };
 
 class Poliz {
@@ -55,6 +63,7 @@ class Poliz {
     bool addLabel(const std::string &label, int idx);
     bool checkIfLabelInRegist(const std::string &label);
     int getLabelAddress(const std::string &label);
+    std::vector<PolizEntry> getEntries() const;
 
     template <typename T> void setEntryOp(int idx, const T &val) {
         if constexpr (std::is_same_v<T, int64_t>) {
@@ -92,5 +101,7 @@ class Poliz {
 EPolizCmd StrToPEntryType(const std::string &str);
 
 ERegister StrToRegType(const std::string &str);
+
+extern std::map<EPolizCmd, std::string> g_PolizCmdToStr;
 
 #endif

@@ -4,6 +4,7 @@
 #include "mystack/src/mystack.h"
 #include <cstddef>
 #include <filesystem>
+#include <fstream>
 #include <initializer_list>
 #include <iostream>
 #include <memory>
@@ -82,7 +83,7 @@ int main(int argc, char *argv[]) {
     // std::cout << elem.a << " " << elem.b << '\n';
     // std::cout << "_______________________\n";
 
-    // container::Stack<int> a;
+    //     container::Stack<int> a;
 
     if (argc < 2) {
         throw std::runtime_error("no file was passed in arguments");
@@ -125,6 +126,35 @@ int main(int argc, char *argv[]) {
 
     compiler.compile();
     auto poliz = compiler.getPoliz();
+
+    for (auto &elem : poliz.getEntries()) {
+        std::cout << g_PolizCmdToStr[elem.cmd] << " ";
+        if (elem.reg != ERegister::None) {
+            std::cout << (int32_t)elem.reg << "\n";
+        } else {
+            std::cout << elem.operand << "\n";
+        }
+    }
+
+    std::ofstream output("progfiles/output.out", std::ios::binary);
+    //    for (auto &elem : poliz.getEntries()) {
+    //        //        auto st = elem.toStruct();
+    //        //        output.write(reinterpret_cast<const char *>(&st),
+    //        sizeof(st)); output.write(reinterpret_cast<const char *>(&elem),
+    //        sizeof(elem));
+    //    }
+
+    auto entries = poliz.getEntries();
+    uint16_t entries_size = entries.size();
+    output.write(reinterpret_cast<const char *>(&entries_size),
+                 sizeof(entries_size));
+    output.write(reinterpret_cast<const char *>(&entries[0]),
+                 sizeof(PolizEntry) * entries_size);
+
+    if (!output.good()) {
+        throw std::runtime_error("Failed to write file");
+    }
+    output.close();
 
     return 0;
 }
