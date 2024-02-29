@@ -1,5 +1,8 @@
 begin
 
+jmp main
+
+factorial:
 in
 popr BX
 
@@ -34,5 +37,9 @@ pop
 pop
 
 out
+ret
+
+main:
+call factorial
 
 end
