@@ -112,7 +112,7 @@ class Stack : private Alloc {
 
     Alloc getAlloc() const { return static_cast<Alloc>(*this); }
 
-    friend void swap(Stack<T> &a, Stack<T> &b);
+    template <StackType U> friend void swap(Stack<U> &a, Stack<U> &b);
 
   private:
     class Node {
