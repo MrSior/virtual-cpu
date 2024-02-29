@@ -139,6 +139,7 @@ void Runtime::run() {
             stack.push(val1);
         } else if (elem.cmd == EPolizCmd::Ret) {
             ind = stack.pop();
+            isMove = false;
         }
 
         if (isMove) {

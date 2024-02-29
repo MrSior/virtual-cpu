@@ -1,0 +1,46 @@
+begin
+    call factorial
+    jmp label_end
+
+factorial:
+    in
+    popr BX
+
+    push 1
+    popr AX
+    push 1
+
+    push 0
+    push 0
+
+start:
+    pop
+    pop
+
+    pushr AX
+    push 1
+    add
+    popr AX
+    pop
+
+    mul
+    popr CX
+    pop
+    pop
+    pushr CX
+
+    pushr AX
+    pushr BX
+    jae start
+
+    pop
+    pop
+
+    out
+    ret
+
+label_end:
+push 10
+pop
+
+end

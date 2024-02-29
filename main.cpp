@@ -129,8 +129,10 @@ int main(int argc, char *argv[]) {
     compiler.compile();
     auto poliz = compiler.getPoliz();
 
+    int i = 0;
     for (auto &elem : poliz.getEntries()) {
-        std::cout << g_PolizCmdToStr[elem.cmd] << " ";
+        std::cout << std::setw(3) << i++ << "  " << g_PolizCmdToStr[elem.cmd]
+                  << " ";
         if (elem.reg != ERegister::None) {
             std::cout << (int32_t)elem.reg << "\n";
         } else {
