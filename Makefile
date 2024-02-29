@@ -1,4 +1,5 @@
-CXX=clang++
+# CXX=clang++
+CXX=g++
 # CXX=/opt/homebrew/opt/gcc/bin/g++-13
 CXXFLAGS=-std=c++20
 

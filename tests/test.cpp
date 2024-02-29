@@ -71,3 +71,11 @@ Test(stack_methods, move_constructor) {
     }
     cr_expect(second_stack.empty(), "appear extra elements");
 }
+
+Test(stack_methods, emplace) {
+    container::Stack<int> stack;
+    for (int ind = 0; ind < 5; ++ind) {
+        stack.emplace(ind);
+    }
+    cr_expect(stack.top() == 4, "not correct push");
+}

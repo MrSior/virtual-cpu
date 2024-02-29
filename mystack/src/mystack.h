@@ -81,6 +81,10 @@ class Stack : private Alloc {
         ++size_;
     }
 
+    template <typename... Args> void emplace(const Args &...args) {
+        push(T(args...));
+    }
+
     T pop() {
         if (empty()) {
             throw std::runtime_error("can not pop from an empty stack");

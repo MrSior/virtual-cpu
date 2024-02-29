@@ -1,0 +1,38 @@
+begin
+
+in
+popr BX
+
+push 1
+popr AX
+push 1
+
+push 0
+push 0
+
+start:
+pop
+pop
+
+pushr AX
+push 1
+add
+popr AX
+pop
+
+mul
+popr CX
+pop
+pop
+pushr CX
+
+pushr AX
+pushr BX
+jae start
+
+pop
+pop
+
+out
+
+end
