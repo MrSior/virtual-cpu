@@ -3,6 +3,7 @@
 
 #include "Lexeme.h"
 #include "Stream.h"
+#include <filesystem>
 #include <vector>
 
 class LexemeParser {

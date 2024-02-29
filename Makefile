@@ -32,7 +32,7 @@ RUNTIME_OBJ_DIR = $(RUNTIME_DIR)/obj
 RUNTIME_SRCS = $(wildcard $(RUNTIME_DIR)/*.cpp)
 RUNTIME_OBJS = $(patsubst $(RUNTIME_DIR)/%.cpp, $(RUNTIME_OBJ_DIR)/%.o, $(RUNTIME_SRCS))
 
-all: $(STACK) $(BUILD)/main 
+all: $(STACK) $(BUILD)/main
 
 $(BUILD)/main: main.cpp $(LEXEME_P_OBJS) $(COMPILE_OBJS)
 	@mkdir -p $(BUILD)
@@ -73,7 +73,7 @@ test: $(TEST)/bin $(TESTBINS)
 	@for test in $(TESTBINS) ; do ./$$test ; done
 
 testinfo: $(TEST)/bin $(TESTBINS)
-	@for test in $(TESTBINS) ; do ./$$test --verbose ; done 
+	@for test in $(TESTBINS) ; do ./$$test --verbose ; done
 
 .PHONY: run clean test testinfo compile
 

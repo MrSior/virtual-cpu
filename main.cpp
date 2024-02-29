@@ -95,7 +95,8 @@ int main(int argc, char *argv[]) {
     auto res = parser.GetLexemes(input_file);
 
     for (auto &elem : res) {
-        std::cout << "Line: " << elem.line << " pos: " << elem.pos << " "
+        std::cout << "Line:" << std::setw(3) << elem.line
+                  << "  pos:" << std::setw(3) << elem.pos << "  "
                   << g_LexemeTypeToStr[elem.type] << " "
                   << LexemeDataToStr(elem) << std::endl;
     }
