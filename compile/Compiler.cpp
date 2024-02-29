@@ -35,14 +35,14 @@ void Compiler::compile() {
 
 void Compiler::Program() {
     if (cur_lexeme_.str != "begin") {
-        throw CompileError("Program should start with BEGIN instruction",
-                           cur_lexeme_.line, cur_lexeme_.pos);
+        throw CompileError("Expected BEGIN instruction", cur_lexeme_.line,
+                           cur_lexeme_.pos);
     }
     movePtr(1);
 
     if (cur_lexeme_.type != ELexemeType::Newline) {
-        throw CompileError("Each instruction should be placed on new line",
-                           cur_lexeme_.line, cur_lexeme_.pos);
+        throw CompileError("Expecte newline", cur_lexeme_.line,
+                           cur_lexeme_.pos);
     }
     movePtr(1);
 
@@ -53,8 +53,8 @@ void Compiler::Expressions() {
     Expression();
 
     if (cur_lexeme_.type != ELexemeType::Newline) {
-        throw CompileError("Each instruction should be placed on new line",
-                           cur_lexeme_.line, cur_lexeme_.pos);
+        throw CompileError("Expecte newline", cur_lexeme_.line,
+                           cur_lexeme_.pos);
     }
     movePtr(1);
 
@@ -113,8 +113,8 @@ void Compiler::Expression() {
         }
         break;
     case ELexemeType::ProgramEnd:
-        throw CompileError("Program should end with END instruction",
-                           cur_lexeme_.line, cur_lexeme_.pos);
+        throw CompileError("Expected END instruction", cur_lexeme_.line,
+                           cur_lexeme_.pos);
     default:
         throw CompileError("Expected instruction", cur_lexeme_.line,
                            cur_lexeme_.pos);
