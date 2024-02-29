@@ -2,6 +2,8 @@
 
 void Poliz::addEntry(const PolizEntry &entry) { poliz_.push_back(entry); }
 
+void Poliz::addUnsetJump(UnsetJmp item) { unset_jmps_.emplace_back(item); }
+
 bool Poliz::addLabel(const std::string &label, int idx) {
     if (labelsRegistry_.contains(label)) {
         return false;
@@ -16,10 +18,13 @@ bool Poliz::checkIfLabelInRegist(const std::string &label) {
     return labelsRegistry_.contains(label);
 }
 
-int Poliz::getLabelAddress(const std::string &label) {
+int64_t Poliz::getLabelAddress(const std::string &label) {
     return labelsRegistry_[label];
 }
+
 std::vector<PolizEntry> Poliz::getEntries() const { return poliz_; }
+
+std::vector<UnsetJmp> Poliz::getUnsetJmps() { return unset_jmps_; }
 
 EPolizCmd StrToPEntryType(const std::string &str) {
     if (str == "pop")

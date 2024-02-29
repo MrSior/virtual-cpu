@@ -51,13 +51,29 @@ void Runtime::run() {
         } else if (elem.cmd == EPolizCmd::Popr) {
             regs[elem.reg] = stack.pop();
         } else if (elem.cmd == EPolizCmd::Add) {
-            stack.push(stack.pop() + stack.pop());
+            int64_t val1 = stack.pop();
+            int64_t val2 = stack.top();
+            int64_t res = val1 + val2;
+            stack.push(val1);
+            stack.push(res);
         } else if (elem.cmd == EPolizCmd::Sub) {
-            stack.push(stack.pop() - stack.pop());
+            int64_t val1 = stack.pop();
+            int64_t val2 = stack.top();
+            int64_t res = val1 - val2;
+            stack.push(val1);
+            stack.push(res);
         } else if (elem.cmd == EPolizCmd::Mul) {
-            stack.push(stack.pop() * stack.pop());
+            int64_t val1 = stack.pop();
+            int64_t val2 = stack.top();
+            int64_t res = val1 * val2;
+            stack.push(val1);
+            stack.push(res);
         } else if (elem.cmd == EPolizCmd::Div) {
-            stack.push(stack.pop() / stack.pop());
+            int64_t val1 = stack.pop();
+            int64_t val2 = stack.top();
+            int64_t res = val1 / val2;
+            stack.push(val1);
+            stack.push(res);
         } else if (elem.cmd == EPolizCmd::Out) {
             std::cout << stack.pop() << std::endl;
         } else if (elem.cmd == EPolizCmd::In) {
@@ -70,7 +86,6 @@ void Runtime::run() {
         } else if (elem.cmd == EPolizCmd::Jeq) {
             auto val1 = stack.pop();
             auto val2 = stack.pop();
-            // std::cout << val1 << " " << val2 << std::endl;
             if (val1 == val2) {
                 ind = elem.operand;
                 isMove = false;

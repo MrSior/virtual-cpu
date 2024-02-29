@@ -1,6 +1,7 @@
 #ifndef VIRTUAL_CPU_POLIZ_H
 #define VIRTUAL_CPU_POLIZ_H
 
+#include <cstdint>
 #include <map>
 #include <string>
 #include <utility>
@@ -53,17 +54,27 @@ class PolizEntry {
     PolizStruct toStruct();
 };
 
+struct UnsetJmp {
+    int idx;
+    std::string label;
+    int line;
+    int pos;
+};
+
 class Poliz {
   private:
     std::vector<PolizEntry> poliz_;
     std::map<std::string, int> labelsRegistry_;
+    std::vector<UnsetJmp> unset_jmps_;
 
   public:
     void addEntry(const PolizEntry &entry);
+    void addUnsetJump(UnsetJmp item);
     bool addLabel(const std::string &label, int idx);
     bool checkIfLabelInRegist(const std::string &label);
-    int getLabelAddress(const std::string &label);
+    int64_t getLabelAddress(const std::string &label);
     std::vector<PolizEntry> getEntries() const;
+    std::vector<UnsetJmp> getUnsetJmps();
 
     template <typename T> void setEntryOp(int idx, const T &val) {
         if constexpr (std::is_same_v<T, int64_t>) {

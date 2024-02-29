@@ -3,6 +3,7 @@
 //
 
 #include "Compiler.h"
+#include "Poliz.h"
 
 void Compiler::movePtr(int idx) {
     cur_lexeme_idx_ += idx;
@@ -16,6 +17,16 @@ void Compiler::compile() {
         if (!input_.empty()) {
             movePtr(1);
             Program();
+
+            auto unset_jmps = poliz_.getUnsetJmps();
+            for (auto &elem : unset_jmps) {
+                if (!poliz_.checkIfLabelInRegist(elem.label)) {
+                    throw CompileError("Transition to undefined label",
+                                       elem.line, elem.pos);
+                }
+                poliz_.setEntryOp(elem.idx,
+                                  (int64_t)poliz_.getLabelAddress(elem.label));
+            }
         }
     } catch (const CompileError &error) {
         std::cout << "[COMPILE ERROR]: " << error.what() << std::endl;
@@ -128,12 +139,15 @@ void Compiler::Arg(EArgType expect_arg) {
             throw CompileError("Expected label as an argument",
                                cur_lexeme_.line, cur_lexeme_.pos);
         }
-        if (!poliz_.checkIfLabelInRegist(cur_lexeme_.str)) {
-            throw CompileError("Transition to undefined label",
-                               cur_lexeme_.line, cur_lexeme_.pos);
-        }
-        poliz_.setEntryOp(poliz_.getSize() - 1,
-                          (int64_t)poliz_.getLabelAddress(cur_lexeme_.str));
+        // if (!poliz_.checkIfLabelInRegist(cur_lexeme_.str)) {
+        //     throw CompileError("Transition to undefined label",
+        //                        cur_lexeme_.line, cur_lexeme_.pos);
+        // }
+        // poliz_.setEntryOp(poliz_.getSize() - 1,
+        //                   (int64_t)poliz_.getLabelAddress(cur_lexeme_.str));
+
+        poliz_.addUnsetJump({poliz_.getSize() - 1, cur_lexeme_.str,
+                             cur_lexeme_.line, cur_lexeme_.pos});
     }
 
     movePtr(1);

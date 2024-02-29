@@ -1,12 +1,36 @@
 begin
 
-start:
+push 1
+push 1
+
+push 2
+popr CX
 
 push 1
-push 2
-push 3
+push 1
+
+cycle:
+pop
+pop
+
+add
+popr AX
+popr BX
 out
-out
-out
+
+pushr BX
+pushr AX
+
+pushr CX
+push 1
+add
+popr CX
+pop
+pop
+
+pushr CX
+push 40
+jae cycle
+
 
 end
